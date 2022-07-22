@@ -6,9 +6,19 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Oswald&family=Prompt&display=swap');
 
+body {
+    background-color: #bdcebe;
+}
+
+header {
+    background-color: #d6cbd3;
+    padding: 25px 20px 15px;
+}
+
 h1 {
     font-family: 'Prompt', sans-serif;
-    margin: 20px;
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 form {
@@ -19,61 +29,67 @@ form {
 }
 
 form input {
-    padding: 15px;
+    padding: 10px;
 }
 
 .text {
     border-radius: 8px 0 0 8px;
-    border-right-style: none;
+    font-size: 20px;
+    border: none;
     width: 100%;
     max-width: 500px;
 }
 
 .btn {
     border-radius: 0 8px 8px 0;
-}
-
-.list {
-    margin: 15px auto;
-    border: 1px solid rgba(0 0 0 / 1%);
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0 0 0 / 25%) inset;
-    min-height: 30px;
-    height: fit-content;
-    max-width: 600px;
-}
-
-.list div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+    width: 50px;
+    height: 50px;
 }
 
 button {
     width: 30px;
     height: 30px;
+    cursor: pointer;
+}
+
+.move {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.move button {
+    width: fit-content;
+    height: 25px;
+}
+
+.list {
+    margin: 0 auto;
+    padding: 15px 0;
+    border: 1px solid rgba(0 0 0 / 1%);
+    height: fit-content;
+    max-width: 600px;
 }
 
 .item {
+    display: flex;
+    align-items: center;
+}
+
+.task {
     background-color: snow;
     font-family: 'Oswald', sans-serif;
-    width: 100%;
-    margin: 15px 0;
+    min-width: fit-content;
+    margin: 12px 0;
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0 0 0 / 25%);
     text-decoration: gray solid line-through 3px;
     color: #555;
+    overflow-wrap: break-word;
 }
+
 .active {
     text-decoration: none;
     color: black;
-}
-
-.cheats {
-    width: 500px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-around;
 }

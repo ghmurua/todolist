@@ -5,48 +5,92 @@ let c = 0;
 let taskList = [];
 
 const checked = (id) => {
-    // console.log('id',id);
     document.querySelector(`#id${id}`).classList.toggle('active');
 
-    let index = taskList.findIndex(x => x.id === id)
-    taskList[index].status = !taskList[index].status;
+    let i = taskList.findIndex(x => x.id === id)
+    taskList[i].status = !taskList[i].status;
 
     save();
 }
 
 const del = (id) => {
-    taskList = taskList.filter(paq => paq.id != id)
-    console.error(taskList);
+    taskList = taskList.filter(tsk => tsk.id != id)
+
     save();
     load();
+}
+
+const up = (id) => {
+    let i = taskList.findIndex(x => x.id === id)
+
+    if (i > 1) {
+        let auxId = taskList[i-1].id;
+        let auxValue = taskList[i-1].value;
+        let auxStatus = taskList[i-1].status;
+
+        taskList[i-1].id = taskList[i].id;
+        taskList[i-1].value = taskList[i].value;
+        taskList[i-1].status = taskList[i].status;
+
+        taskList[i].id = auxId;
+        taskList[i].value = auxValue;
+        taskList[i].status = auxStatus;
+
+        save();
+        load();
+    }
+}
+
+const down = (id) => {
+    let i = taskList.findIndex(x => x.id === id)
+
+    if (i < (taskList.length - 1)) {
+        let auxId = taskList[i+1].id;
+        let auxValue = taskList[i+1].value;
+        let auxStatus = taskList[i+1].status;
+
+        taskList[i+1].id = taskList[i].id;
+        taskList[i+1].value = taskList[i].value;
+        taskList[i+1].status = taskList[i].status;
+
+        taskList[i].id = auxId;
+        taskList[i].value = auxValue;
+        taskList[i].status = auxStatus;
+
+        save();
+        load();
+    }
 }
 
 const onScreen = (item) => {
     (item.status) ? check = 'active' : check = ''
     div = document.createElement("DIV");
+    div.setAttribute('class','item');
 	div.innerHTML = `
-	<div id='id${item.id}' class="item ${check}"> ${item.value} </div>
-    <button onclick='checked(${item.id})'>V</button>
-    <button onclick='del("${item.id}")'>X</button>
+    <div class='move'>
+        <button onclick='up(${item.id})'>
+            <img src="svg/chevron-up.svg" alt="img-up">
+        </button>
+        <button onclick='down(${item.id})'>
+            <img src="svg/chevron-down.svg" alt="img-down">
+        </button>
+    </div>
+
+    <div id='id${item.id}' class="task ${check}"> ${item.value} </div>
+
+    <button onclick='checked(${item.id})'>
+        <img src="svg/check.svg" alt="img-check">
+    </button>
+    <button onclick='del("${item.id}")'>
+        <img src="svg/close.svg" alt="img-delete">
+    </button>
     `;
     list.appendChild(div);
-}
-
-const counter = () => {
-    c++;
-    console.log('sumando',c);
-}
-
-const destroy = () => {
-    localStorage.clear();
-    console.error('todo borrado --x');
-    load();
 }
 
 const save = () => {
     taskList[0] = c;
     localStorage.setItem("taskListStoraged", JSON.stringify(taskList));
-    console.warn('enviando a localstorage -->');
 }
 
 const load = () => {
@@ -58,16 +102,8 @@ const load = () => {
     }
 
     c = taskList[0];
-    console.warn('trayendo desde localstorage <--',taskList);
+
     return taskList;
-}
-
-const seeStorage = () => {
-    console.error('que hay en storage?',JSON.parse(localStorage.getItem("taskListStoraged")));
-}
-
-const seeApp = () => {
-    console.log('mirando contenido ._.',taskList);
 }
 
 const add = (txt) => {
@@ -76,7 +112,6 @@ const add = (txt) => {
     itemToStorage.id = c;
     itemToStorage.value = txt;
     itemToStorage.status = true;
-    console.log('itemToStorage',itemToStorage)
 
     taskList.push(itemToStorage);
 
@@ -87,7 +122,12 @@ const add = (txt) => {
 
 form.addEventListener('submit', e=>{
     e.preventDefault();
-    add(text.value);
+    let txt = text.value.trim();
+
+    if (txt != '') {
+        text.focus();
+        add(txt);
+    }
 })
 
 window.addEventListener("load",	load())
