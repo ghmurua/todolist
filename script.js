@@ -1,71 +1,96 @@
 const form  = document.querySelector('.form');
 const text = document.querySelector('.text');
 const list = document.querySelector('.list');
+const tabs = document.querySelector('.tabs');
+const tab1 = document.getElementById('tab1');
+const tab2 = document.getElementById('tab2');
+const tab3 = document.getElementById('tab3');
 let c = 0;
-let taskList = [];
+let tab = 1;
+let taskList = [0,[],[],[]];
+
+const setTab = (t) =>{
+    tab1.classList.remove('activeTab');
+    tab2.classList.remove('activeTab');
+    tab3.classList.remove('activeTab');
+    document.getElementById(`tab${t}`).classList.add('activeTab');
+    tab = t;
+    load();
+}
 
 const checked = (id) => {
-    document.querySelector(`#id${id}`).classList.toggle('active');
-
-    let i = taskList.findIndex(x => x.id === id)
-    taskList[i].status = !taskList[i].status;
-
+    if (document.querySelector(`#id${id}`).classList.contains('active')) end(id);
+    document.getElementById(`id${id}`).classList.toggle('active');
+    let i = taskList[tab].findIndex((e,i) => {
+        if (e.id == id) return i
+    })
+    taskList[tab][i].status = !taskList[tab][i].status
     save();
 }
 
 const del = (id) => {
-    taskList = taskList.filter(tsk => tsk.id != id)
-
+    let index = taskList[tab].findIndex((e,i) => {
+        if (e.id == id) return i
+    })
+    taskList[tab].splice(index,1)
     save();
     load();
 }
 
 const up = (id) => {
-    let i = taskList.findIndex(x => x.id === id)
-
-    if (i > 1) {
-        let auxId = taskList[i-1].id;
-        let auxValue = taskList[i-1].value;
-        let auxStatus = taskList[i-1].status;
-
-        taskList[i-1].id = taskList[i].id;
-        taskList[i-1].value = taskList[i].value;
-        taskList[i-1].status = taskList[i].status;
-
-        taskList[i].id = auxId;
-        taskList[i].value = auxValue;
-        taskList[i].status = auxStatus;
-
+    let index = taskList[tab].findIndex((e,i) => {
+        if (e.id == id) return i
+    })
+    if (index > 1) {
+        let movingTask = {
+            id : taskList[tab][index].id,
+            value: taskList[tab][index].value,
+            status: taskList[tab][index].status
+        }
+        taskList[tab].splice(index,1)
+        taskList[tab].splice(index-1,0,movingTask)
         save();
         load();
     }
 }
 
 const down = (id) => {
-    let i = taskList.findIndex(x => x.id === id)
-
-    if (i < (taskList.length - 1)) {
-        let auxId = taskList[i+1].id;
-        let auxValue = taskList[i+1].value;
-        let auxStatus = taskList[i+1].status;
-
-        taskList[i+1].id = taskList[i].id;
-        taskList[i+1].value = taskList[i].value;
-        taskList[i+1].status = taskList[i].status;
-
-        taskList[i].id = auxId;
-        taskList[i].value = auxValue;
-        taskList[i].status = auxStatus;
-
+    let index = taskList[tab].findIndex((e,i) => {
+        if (e.id == id) return i
+    })
+    if (index < (taskList[tab].length - 1)) {
+        let movingTask = {
+            id : taskList[tab][index].id,
+            value: taskList[tab][index].value,
+            status: taskList[tab][index].status
+        }
+        taskList[tab].splice(index,1)
+        taskList[tab].splice(index+1,0,movingTask)
         save();
         load();
     }
 }
 
+const end = (id) => {
+    let index = taskList[tab].findIndex((e,i) => {
+        if (e.id == id) return i
+    })
+    let movingTask = {
+        id : taskList[tab][index].id,
+        value: taskList[tab][index].value,
+        status: taskList[tab][index].status
+    }
+    taskList[tab].splice(index,1)
+    taskList[tab].push(movingTask);
+    save();
+    load();
+}
+
 const onScreen = (item) => {
     (item.status) ? check = 'active' : check = ''
     div = document.createElement("DIV");
-    div.setAttribute('class','item');
+    div.setAttribute('class',`item ${check}`);
+    div.setAttribute('id',`id${item.id}`)
 	div.innerHTML = `
     <div class='move'>
         <button onclick='up(${item.id})'>
@@ -76,12 +101,14 @@ const onScreen = (item) => {
         </button>
     </div>
 
-    <div id='id${item.id}' class="task ${check}"> ${item.value} </div>
+    <div class="task">
+        ${item.value}
+    </div>
 
     <button onclick='checked(${item.id})'>
         <img src="svg/check.svg" alt="img-check">
     </button>
-    <button onclick='del("${item.id}")'>
+    <button onclick='del(${item.id})'>
         <img src="svg/close.svg" alt="img-delete">
     </button>
     `;
@@ -94,15 +121,14 @@ const save = () => {
 }
 
 const load = () => {
-    taskList = JSON.parse(localStorage.getItem("taskListStoraged")) || [0];
+    taskList = JSON.parse(localStorage.getItem("taskListStoraged")) || [0,['A'],['B'],['C']];
     list.innerHTML = '';
-
-    for ( let i=1; i<taskList.length; i++) {
-        onScreen(taskList[i]);
+    if (taskList[tab].length > 1) {
+        for ( let i=1; i<taskList[tab].length; i++) {
+            onScreen(taskList[tab][i])
+        }
     }
-
     c = taskList[0];
-
     return taskList;
 }
 
@@ -112,9 +138,7 @@ const add = (txt) => {
     itemToStorage.id = c;
     itemToStorage.value = txt;
     itemToStorage.status = true;
-
-    taskList.push(itemToStorage);
-
+    taskList[tab].push(itemToStorage);
     onScreen(itemToStorage);
     save();
     form.reset();
@@ -123,11 +147,13 @@ const add = (txt) => {
 form.addEventListener('submit', e=>{
     e.preventDefault();
     let txt = text.value.trim();
-
     if (txt != '') {
         text.focus();
         add(txt);
     }
 })
 
-window.addEventListener("load",	load())
+tab1.addEventListener('click',()=>setTab(1));
+tab2.addEventListener('click',()=>setTab(2));
+tab3.addEventListener('click',()=>setTab(3));
+window.addEventListener('load', load());
