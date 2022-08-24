@@ -1,46 +1,128 @@
 const form  = document.querySelector('.form');
-const text = document.querySelector('.text');
+const inputText = document.querySelector('.input-text');
 const list = document.querySelector('.list');
 const tabs = document.querySelector('.tabs');
-const tab1 = document.getElementById('tab1');
-const tab2 = document.getElementById('tab2');
-const tab3 = document.getElementById('tab3');
+const modal = document.querySelector('.modal');
+const modalTabs = document.querySelector('.modal-tabs');
+const btnAddTab = document.querySelector('.btn-addTab');
+
 let c = 0;
 let tab = 1;
-let taskList = [0,[],[],[]];
+let taskList = [];
+let totalTabs = 1;
+
+//  M O D A L,  T A B S 
+
+const showTabs = () => {
+    tabs.innerHTML = '';
+    totalTabs = 0;
+    for ( let i=1; i<taskList.length; i++) {
+        (tab === i) 
+        ? tabs.innerHTML += `
+        <div id="tab${i}" class="active-tab">
+            ${taskList[i][0]}
+        </div>`
+        : tabs.innerHTML += `
+        <div id="tab${i}">
+            ${taskList[i][0]}
+        </div>`;
+        totalTabs++;
+    }
+    for ( let i=1; i<taskList.length; i++) {
+        document.getElementById(`tab${i}`).addEventListener('click',()=>setTab(i));
+    }
+    (totalTabs < 5)
+    ? btnAddTab.setAttribute('class','btn-addTab')
+    : btnAddTab.setAttribute('class','btn-addTab hidden')
+}
+
+const refreshModal = () => {
+    // console.warn(taskList.length,totalTabs)
+    modalTabs.innerHTML = '';
+    for ( let i=1; i<taskList.length; i++) {
+        (i === totalTabs && totalTabs > 1)
+        ? modalTabs.innerHTML += `
+        <div>
+            <input type="text" value="${taskList[i][0]}"></input>
+            <button>
+                <img src="svg/bx-minus.svg" alt="img-up">
+            </button>
+        </div>`
+        : modalTabs.innerHTML += `
+        <div>
+            <input type="text" value="${taskList[i][0]}"></input>
+        </div>`
+    }
+}
+
+const showTabsModal = () =>{
+    refreshModal();
+    modal.showModal();
+}
+
+const delTab = (e) => {
+    if (e.target.tagName === 'IMG') {
+        if (totalTabs > 1) {
+            taskList.pop();
+            // console.log('deleting tab',totalTabs);
+            save();
+            refreshModal();
+        }
+    }
+}
+
+const addTab = () => {
+    if (totalTabs < 5) {
+        taskList.push(['New Tab']);
+        // console.log('adding tab',taskList.length);
+        save();
+        refreshModal();
+    }
+}
 
 const setTab = (t) =>{
-    tab1.classList.remove('activeTab');
-    tab2.classList.remove('activeTab');
-    tab3.classList.remove('activeTab');
-    document.getElementById(`tab${t}`).classList.add('activeTab');
+    for ( let i=1; i<taskList.length; i++) {
+        document.getElementById(`tab${i}`).classList.remove('active-tab');
+    }
+    document.getElementById(`tab${t}`).classList.add('active-tab');
     tab = t;
     load();
 }
 
+//  T A S K S
+
+const getIndex = (id) => {
+    return taskList[tab].findIndex((e,i) => (e.id == id))
+}
+
 const checked = (id) => {
-    if (document.querySelector(`#id${id}`).classList.contains('active')) end(id);
+    if (document.getElementById(`id${id}`).classList.contains('active')) end(id);
     document.getElementById(`id${id}`).classList.toggle('active');
-    let i = taskList[tab].findIndex((e,i) => {
-        if (e.id == id) return i
-    })
+    let i = getIndex(id);
     taskList[tab][i].status = !taskList[tab][i].status
     save();
 }
 
+const end = (id) => {
+    let index = getIndex(id);
+    let movingTask = {
+        id : taskList[tab][index].id,
+        value: taskList[tab][index].value,
+        status: taskList[tab][index].status
+    }
+    taskList[tab].splice(index,1)
+    taskList[tab].push(movingTask);
+    save();
+}
+
 const del = (id) => {
-    let index = taskList[tab].findIndex((e,i) => {
-        if (e.id == id) return i
-    })
+    let index = getIndex(id);
     taskList[tab].splice(index,1)
     save();
-    load();
 }
 
 const up = (id) => {
-    let index = taskList[tab].findIndex((e,i) => {
-        if (e.id == id) return i
-    })
+    let index = getIndex(id);
     if (index > 1) {
         let movingTask = {
             id : taskList[tab][index].id,
@@ -50,14 +132,11 @@ const up = (id) => {
         taskList[tab].splice(index,1)
         taskList[tab].splice(index-1,0,movingTask)
         save();
-        load();
     }
 }
 
 const down = (id) => {
-    let index = taskList[tab].findIndex((e,i) => {
-        if (e.id == id) return i
-    })
+    let index = getIndex(id);
     if (index < (taskList[tab].length - 1)) {
         let movingTask = {
             id : taskList[tab][index].id,
@@ -67,61 +146,46 @@ const down = (id) => {
         taskList[tab].splice(index,1)
         taskList[tab].splice(index+1,0,movingTask)
         save();
-        load();
     }
-}
-
-const end = (id) => {
-    let index = taskList[tab].findIndex((e,i) => {
-        if (e.id == id) return i
-    })
-    let movingTask = {
-        id : taskList[tab][index].id,
-        value: taskList[tab][index].value,
-        status: taskList[tab][index].status
-    }
-    taskList[tab].splice(index,1)
-    taskList[tab].push(movingTask);
-    save();
-    load();
 }
 
 const onScreen = (item) => {
     (item.status) ? check = 'active' : check = ''
-    div = document.createElement("DIV");
-    div.setAttribute('class',`item ${check}`);
-    div.setAttribute('id',`id${item.id}`)
-	div.innerHTML = `
-    <div class='move'>
-        <button onclick='up(${item.id})'>
-            <img src="svg/chevron-up.svg" alt="img-up">
-        </button>
-        <button onclick='down(${item.id})'>
-            <img src="svg/chevron-down.svg" alt="img-down">
-        </button>
-    </div>
 
-    <div class="task">
-        ${item.value}
-    </div>
+    list.innerHTML += `
+    <div id="id${item.id}" class="item ${check}">
+        <div class='move'>
+            <button onclick='up(${item.id})'>
+                <img src="svg/chevron-up.svg" alt="img-up">
+            </button>
+            <button onclick='down(${item.id})'>
+                <img src="svg/chevron-down.svg" alt="img-down">
+            </button>
+        </div>
 
-    <button onclick='checked(${item.id})'>
-        <img src="svg/check.svg" alt="img-check">
-    </button>
-    <button onclick='del(${item.id})'>
-        <img src="svg/close.svg" alt="img-delete">
-    </button>
-    `;
-    list.appendChild(div);
+        <div class="task">
+            ${item.value}
+        </div>
+
+        <button onclick='checked(${item.id})'>
+            <img src="svg/check.svg" alt="img-check">
+        </button>
+        <button onclick='del(${item.id})'>
+            <img src="svg/close.svg" alt="img-delete">
+        </button>
+    </div>`;
 }
+
+//  M O D I F I N G   L O C A L   S T O R A G E   F I L E
 
 const save = () => {
     taskList[0] = c;
     localStorage.setItem("taskListStoraged", JSON.stringify(taskList));
+    load();
 }
 
 const load = () => {
-    taskList = JSON.parse(localStorage.getItem("taskListStoraged")) || [0,['A'],['B'],['C']];
+    taskList = JSON.parse(localStorage.getItem("taskListStoraged")) || [0,['New Tab']];
     list.innerHTML = '';
     if (taskList[tab].length > 1) {
         for ( let i=1; i<taskList[tab].length; i++) {
@@ -129,7 +193,7 @@ const load = () => {
         }
     }
     c = taskList[0];
-    return taskList;
+    showTabs();
 }
 
 const add = (txt) => {
@@ -138,22 +202,23 @@ const add = (txt) => {
     itemToStorage.id = c;
     itemToStorage.value = txt;
     itemToStorage.status = true;
-    taskList[tab].push(itemToStorage);
-    onScreen(itemToStorage);
+
+    taskList[tab].splice(1,0,itemToStorage);
     save();
     form.reset();
 }
 
 form.addEventListener('submit', e=>{
     e.preventDefault();
-    let txt = text.value.trim();
+    let txt = inputText.value.trim();
     if (txt != '') {
-        text.focus();
+        inputText.focus();
         add(txt);
     }
 })
 
-tab1.addEventListener('click',()=>setTab(1));
-tab2.addEventListener('click',()=>setTab(2));
-tab3.addEventListener('click',()=>setTab(3));
+btnAddTab.addEventListener('click', ()=> addTab());
+document.querySelector('.modal-tabs').addEventListener('click', (e)=> delTab(e));
+document.querySelector('.btn-closeModal').addEventListener('click', ()=> modal.close());
+document.querySelector('.btn-config').addEventListener('click', ()=> showTabsModal());
 window.addEventListener('load', load());

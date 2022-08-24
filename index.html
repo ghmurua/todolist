@@ -1,33 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <main>
-        <header>
-            <h1>To-Do List</h1>
+  <main>
+    <header>
+      <h1>To-Do List
+        <button class="btn-config">
+          <img src="svg/bx-loader-circle.svg" alt="Config" title="Edit Tabs">
+        </button>
+      </h1>
 
-            <form class="form">
-                <input type="text" class="text" placeholder="Add task">
-                <button class="btn"><img src="svg/source_add-selection.svg" alt="Enter"></button>
-            </form>
+      <form class="form">
+        <input type="text" class="input-text" placeholder="Add task">
+        <button class="btn">
+          <img src="svg/source_add-selection.svg" alt="Enter">
+        </button>
+      </form>
+      <div class="tabs"></div>
+    </header>
 
-            <div class="tabs">
-                <div id="tab1" class="activeTab">Tab 1</div>
-                <div id="tab2" >Tab 2</div>
-                <div id="tab3" >Tab 3</div>
+    <footer>
+      <div class="list"></div>
+    </footer>
+
+    <div>
+      <dialog class="modal">
+        <div class="in-modal">
+            <div>
+                <h3>editando</h3>
+                <div class="modal-tabs">XXX</div>
+                <button class="btn-addTab">
+                  <img src="svg/bx-plus.svg" alt="(+)">
+                </button>
             </div>
-        </header>
-
-        <footer>
-            <div class="list"></div>
-        </footer>
-    </main>
+            <div>
+                <button class="btn-closeModal">
+                    <img src="svg/close.svg" alt="Close">
+                </button>
+                </div>
+            </div>
+      </dialog>
+    </div>
+  </main>
 
 <script src="script.js"></script>
 </body>
