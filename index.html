@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="./svg/check.svg">
   <title>To-Do List</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -18,7 +19,7 @@
 
       <form class="form">
         <input type="text" class="input-text" placeholder="Add task">
-        <button class="btn">
+        <button class="btn-input">
           <img src="svg/source_add-selection.svg" alt="Enter">
         </button>
       </form>
@@ -31,20 +32,18 @@
 
     <div>
       <dialog class="modal">
-        <div class="in-modal">
-            <div>
-                <h3>editando</h3>
-                <div class="modal-tabs">XXX</div>
-                <button class="btn-addTab">
-                  <img src="svg/bx-plus.svg" alt="(+)">
-                </button>
-            </div>
-            <div>
-                <button class="btn-closeModal">
-                    <img src="svg/close.svg" alt="Close">
-                </button>
-                </div>
-            </div>
+        <div>
+          <h3>Tabs editor:</h3>
+          <div class="modal-tabs modal-input-text"></div>
+          <button class="btn-addTab">
+            <img src="svg/bx-plus.svg" alt="(+)">
+          </button>
+        </div>
+        <div>
+          <button class="btn-closeModal">
+            Save and Close
+          </button>
+        </div>
       </dialog>
     </div>
   </main>

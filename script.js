@@ -37,20 +37,19 @@ const showTabs = () => {
 }
 
 const refreshModal = () => {
-    // console.warn(taskList.length,totalTabs)
     modalTabs.innerHTML = '';
     for ( let i=1; i<taskList.length; i++) {
         (i === totalTabs && totalTabs > 1)
         ? modalTabs.innerHTML += `
         <div>
-            <input type="text" value="${taskList[i][0]}"></input>
-            <button>
+            <input type="text" id="tabName${i}" value="${taskList[i][0]}"></input>
+            <button class="btn-delTab">
                 <img src="svg/bx-minus.svg" alt="img-up">
             </button>
         </div>`
         : modalTabs.innerHTML += `
         <div>
-            <input type="text" value="${taskList[i][0]}"></input>
+            <input type="text" id="tabName${i}" value="${taskList[i][0]}"></input>
         </div>`
     }
 }
@@ -60,11 +59,25 @@ const showTabsModal = () =>{
     modal.showModal();
 }
 
+const updateTabNames = () => {
+    for ( let i=1; i<=totalTabs; i++) {
+        let tabName = document.getElementById(`tabName${i}`).value.trim();
+        if (tabName.length > 0) taskList[i][0] = tabName;
+    }
+}
+
+const closeTabsModal = () => {
+    modal.close();
+    updateTabNames();
+    save();
+}
+
 const delTab = (e) => {
+    updateTabNames();
     if (e.target.tagName === 'IMG') {
         if (totalTabs > 1) {
             taskList.pop();
-            // console.log('deleting tab',totalTabs);
+            if (tab === totalTabs) tab--;
             save();
             refreshModal();
         }
@@ -72,9 +85,9 @@ const delTab = (e) => {
 }
 
 const addTab = () => {
+    updateTabNames();
     if (totalTabs < 5) {
         taskList.push(['New Tab']);
-        // console.log('adding tab',taskList.length);
         save();
         refreshModal();
     }
@@ -219,6 +232,6 @@ form.addEventListener('submit', e=>{
 
 btnAddTab.addEventListener('click', ()=> addTab());
 document.querySelector('.modal-tabs').addEventListener('click', (e)=> delTab(e));
-document.querySelector('.btn-closeModal').addEventListener('click', ()=> modal.close());
+document.querySelector('.btn-closeModal').addEventListener('click', ()=> closeTabsModal());
 document.querySelector('.btn-config').addEventListener('click', ()=> showTabsModal());
 window.addEventListener('load', load());

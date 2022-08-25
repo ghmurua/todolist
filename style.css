@@ -7,13 +7,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald&family=Prompt&display=swap');
 
 body {
-    background-color: rgb(189, 206, 190);
+    background-color: #bdcebe;
 }
+
+/* form input */
 
 header {
     background-color: #cebdcd;
     padding: 25px 20px 0;
-    /* border-bottom: 40px dotted rgba(0 0 0 / 25%); */
 }
 
 h1 {
@@ -41,18 +42,27 @@ form input {
     max-width: 500px;
 }
 
-.btn {
+input[type=text]:focus {
+    outline: none;
+    border: 2px solid #d87093;
+}
+
+/* buttons */
+
+.btn-input {
     border-radius: 0 8px 8px 0;
     width: 50px;
     height: 50px;
 }
 
 button {
-    width: 30px;
-    height: 30px;
     cursor: pointer;
     border: hidden;
-    background-color: palevioletred;
+    background-color: #d87093;
+}
+
+button:hover {
+    box-shadow: 0 0 5px #000 inset;
 }
 
 .item button {
@@ -70,6 +80,30 @@ button {
     height: 25px;
 }
 
+.btn-config {
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.btn-addTab, .btn-delTab {
+    padding: 3px;
+    border-radius: 3px;
+}
+
+.btn-closeModal {
+    padding: 15px;
+    border-radius: 10px;
+    width: max-content;
+    position: absolute;
+    bottom: 10px;
+}
+
+.btn-closeModal:hover {
+    text-decoration: underline;
+}
+
+/* taks */
+
 .list {
     margin: 0 auto;
     padding: 15px 0;
@@ -85,19 +119,21 @@ button {
 }
 
 .task {
-    background-color: snow;
+    background-color: #fafafa;
     font-family: 'Oswald', sans-serif;
     margin: 12px 0;
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0 0 0 / 25%);
-    text-decoration: gray solid line-through 2px;
+    text-decoration: #888 solid line-through 2px;
     color: #555;
 }
 
+/* tabs */
+
 .active .task {
     text-decoration: none;
-    color: black;
+    color: #000;
 }
 
 .tabs {
@@ -115,18 +151,24 @@ button {
     background-color: #bdcebe;
 }
 
+.tabs div:hover {
+    text-decoration: underline;
+}
+
 .tabs .active-tab {
     background-color: #85b885;
     font-weight: bold;
 }
 
+/* modal */
+
 .modal {
     margin: 0 auto;
-    margin-top: calc(25vh);
+    margin-top: calc((100vh - 330px) / 2);
     border-radius: 5px;
     padding: 15px;
-    min-height: 50vh;
-    min-width: 330px;
+    min-height: 330px;
+    min-width: 270px;
 }
 
 .modal::backdrop {
@@ -134,17 +176,15 @@ button {
     background-color: rgba(0,0,0,50%);
 }
 
-.in-modal {
-    height: 50vh;
+.modal-tabs div {
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
-    flex-wrap: wrap;
+    align-items: center;
 }
 
 .modal-tabs div input {
     padding: 10px;
-    margin: 3px;
+    margin: 3px 3px 3px 0;
 }
 
 .hidden {
